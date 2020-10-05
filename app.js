@@ -1,12 +1,24 @@
 const http = require('http');
 
 const express = require('express');
+const bodyParser = require('body-parser');
+const path = require('path');
 
 const app = express();
-
-const server = http.createServer(app);
-
 const PORT = 3000;
 
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
+
+app.use(bodyParser.urlencoded({extended: false}));
+
+app.use('/admin',adminRoutes);
+
+app.use(shopRoutes);
+
+app.use((req, res, next) => {
+    res.status(404).sendFile(path.join(__dirname,'views','page-not-found.html'));
+})
+
 console.log(`Listening on port ${PORT}...`);
-server.listen(3000);
+app.listen(PORT);
