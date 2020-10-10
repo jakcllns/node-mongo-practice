@@ -7,6 +7,9 @@ const path = require('path');
 const app = express();
 const PORT = 3000;
 
+app.set('view engine', 'pug');//setting templating engine
+app.set('views', 'views'); //setting defaut view folder
+
 const adminData = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
