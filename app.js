@@ -3,11 +3,14 @@ const http = require('http');
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+const expressHbs = require('express-handlebars');
 
 const app = express();
 const PORT = 3000;
 
-app.set('view engine', 'pug');//setting templating engine
+app.engine('handlebars', expressHbs());
+
+app.set('view engine', 'handlebars');//setting templating engine
 app.set('views', 'views'); //setting defaut view folder
 
 const adminData = require('./routes/admin');
