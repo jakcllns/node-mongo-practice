@@ -6,7 +6,7 @@ const routeDir = require('../util/path');
 const products = [];
 
 router.get('/add-product', (req,res,next)=>{
-    res.render('add-product.hbs', {pageTitle: 'Add Product', path: '/admin/add-product', activeAddProduct: true, productsCSS: true, formCSS: true});
+    res.render('add-product', {pageTitle: 'Add Product', path: '/admin/add-product', activeAddProduct: true, productsCSS: true, formCSS: true});
 });
 
 router.post('/add-product', (req, res, next) => {
