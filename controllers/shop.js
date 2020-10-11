@@ -1,5 +1,5 @@
 const Product = require('../models/product');
-
+const Cart = require('../models/cart');
 //Request URL property can be used directly here because it is coming from the base URL
 
 exports.getCart = (req, res, next) => {
@@ -8,7 +8,9 @@ exports.getCart = (req, res, next) => {
 
 exports.postCart = (req, res, next) => {
     const prodId = req.body.productId;
-    console.log(prodId);
+    Product.findById(prodId, product => {
+        Cart.addProduct(prodId, product.price);
+    });
     res.redirect('/cart');
 }
 

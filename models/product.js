@@ -22,7 +22,7 @@ module.exports = class Product {
     }
 
     save() {
-        this.id = Math.random().toString();
+        this.id = Math.random().toString().replace('0.', '');
         getProductsFromFile(products => {
             products.push(this);
             fs.writeFile(p, JSON.stringify(products), (err) => {

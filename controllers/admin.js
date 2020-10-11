@@ -5,13 +5,13 @@ const appendPrefix = url => {
 }
 
 exports.getAddProduct = (req,res,next) => {
-    res.render('admin/add-product', {pageTitle: 'Add Product', path: appendPrefix(req.url)});
+    res.render('admin/edit-product', {pageTitle: 'Add Product', path: appendPrefix(req.url), editing: false});
 }
 
 exports.postAddProduct = (req, res, next) => {
     const product = new Product(req.body.title, req.body.imageUrl,req.body.description, req.body.price);
     product.save();
-    res.redirect(this.appendPrefix('/products'));  
+    res.redirect(appendPrefix('/products'));  
 }
 
 exports.getProducts = (req, res, next) => {
@@ -22,5 +22,16 @@ exports.getProducts = (req, res, next) => {
 }
 
 exports.getEditProduct = (req,res,next) => {
-    res.render('admin/edit-product', {pageTitle: 'Edit Product', path: appendPrefix(req.url)});
+    const editMode = req.query.edit
+    if (!editMode) {
+        return res.redirect('/');
+    }
+    const prodId = req.params.productId;
+    Product.findById(prodId, product => {
+        if(!product){
+            return res.redirect('/');
+        }
+        res.render('admin/edit-product', {pageTitle: 'Edit Product - ' + product.title, path: appendPrefix(req.url), editing: editMode, product: product});
+    })
+    
 }
