@@ -9,13 +9,12 @@ exports.getAddProduct = (req,res,next) => {
 }
 
 exports.postAddProduct = (req, res, next) => {
-    const product = new Product(req.body.title, req.body.imageUrl,req.body.description, req.body.price);
+    const product = new Product(null,req.body.title, req.body.imageUrl,req.body.description, req.body.price);
     product.save();
     res.redirect(appendPrefix('/products'));  
 }
 
 exports.getProducts = (req, res, next) => {
-    console.log(req.url);
     const products = Product.fetchAll(products => {
         res.render('admin/products', {prods: products, pageTitle: 'Admin Products', path: appendPrefix(req.url), hasProducts: products.length >0});
     });
@@ -37,5 +36,13 @@ exports.getEditProduct = (req,res,next) => {
 }
 
 exports.postEditProduct = (req, res, next) => {
+    Product.findById(req.body.productId, prod => {
+        prod.title = req.body.title;
+        prod.imageUrl = req.body.imageUrl;
+        prod.price = req.body.price;
+        prod.description = req.body.description;
+        prod.save();
+        res.redirect(appendPrefix('/products'));
+    });
     
 }
