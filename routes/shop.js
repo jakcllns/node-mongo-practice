@@ -3,9 +3,9 @@ const path = require('path');
 
 const productsController = require('../controllers/shop');
 
-router.get('/cart', productsController.getCart);
 
-router.post('/cart', productsController.postCart);
+//GET
+router.get('/cart', productsController.getCart);
 
 router.get('/products', productsController.getProducts);
 
@@ -16,5 +16,10 @@ router.get('/checkout');
 router.get('/orders', productsController.getOrders);
 
 router.get('/', productsController.getProducts);
+
+//POST
+router.post('/cart', productsController.postCart);
+
+router.post('/cart-delete-item', productsController.postCartDeleteItem);
 
 exports.routes = router;
