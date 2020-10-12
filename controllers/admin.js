@@ -44,5 +44,12 @@ exports.postEditProduct = (req, res, next) => {
         prod.save();
         res.redirect(appendPrefix('/products'));
     });
-    
+}
+
+exports.postDeleteProduct = (req, res, next) => {
+    console.log(req.body.productId);
+    Product.deleteById(req.body.productId, () => {
+        
+        res.redirect(appendPrefix('/products'));
+    });
 }
