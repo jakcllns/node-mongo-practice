@@ -24,15 +24,18 @@ exports.getOrders = (req, res, next) => {
 }
 
 exports.getProducts = (req, res, next) => {
-    const products = Product.fetchAll(products => {
-        res.render('shop/product-list', {prods: products, pageTitle: 'Products', path: req.url, hasProducts: products.length >0});
+    Product.fetchAll().then(result => {
+        res.render('shop/product-list', {prods: result.rows, pageTitle: 'Products', path: req.url, hasProducts: result.rows.length >0});
+    }).catch(err => {
+        console.log(err);
     });
 }
 
 exports.getProduct = (req, res, next) => {
     const prodId = req.params.productId;
-    Product.findById(prodId, prod => {
-        res.render('shop/product-detail', {pageTitle: 'Product Detail - ' + prod.title, path: '/products', product: prod});
+    Product.findById(prodId).then(result => {
+        const [product] = result.rows; 
+        res.render('shop/product-detail', {pageTitle: 'Product Detail - ' + product.title, path: '/products', product: product});
     });
 }
 

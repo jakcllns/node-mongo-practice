@@ -10,13 +10,21 @@ exports.getAddProduct = (req,res,next) => {
 
 exports.postAddProduct = (req, res, next) => {
     const product = new Product(null,req.body.title, req.body.imageUrl,req.body.description, req.body.price);
-    product.save();
-    res.redirect(appendPrefix('/products'));  
+    product.save()
+        .then(result => {
+            console.log(result);
+            res.redirect(appendPrefix('/products'));  
+        })
+        .catch(err => console.log(err));
+    
+    
+    
 }
 
 exports.getProducts = (req, res, next) => {
-    const products = Product.fetchAll(products => {
-        res.render('admin/products', {prods: products, pageTitle: 'Admin Products', path: appendPrefix(req.url), hasProducts: products.length >0});
+    Product.fetchAll()
+        .then(result => {
+            res.render('admin/products', {prods: result.rows, pageTitle: 'Admin Products', path: appendPrefix(req.url), hasProducts: result.rows.length >0});
     });
 }
 
@@ -47,9 +55,7 @@ exports.postEditProduct = (req, res, next) => {
 }
 
 exports.postDeleteProduct = (req, res, next) => {
-    console.log(req.body.productId);
-    Product.deleteById(req.body.productId, () => {
-        
-        res.redirect(appendPrefix('/products'));
-    });
+    Product.deleteById(req.body.productId)
+        .then(() => res.redirect(appendPrefix('/products')))
+        .catch(err => console.log(err));
 }
