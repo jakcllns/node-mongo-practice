@@ -16,9 +16,7 @@ class Product {
     }
 
     save() {
-        const value = `'${this.title}',${this.price},'${[this.description, this.imageUrl].join("','")}'`
-        console.log(value);
-        return db.query(`insert into products (title, price, description, "imageUrl") values (${value})`);
+        return db.query('insert into products (title, price, description, "imageUrl") values ($1, $2, $3, $4)', [this.title, this.price, this.description, this.imageUrl]);
     }
 
 
@@ -27,11 +25,11 @@ class Product {
     }
 
     static findById(id) {
-        return db.query(`select * from products where id =  + ${id}`);
+        return db.query('select * from products where id =  + $1', [id]);
     }
 
     static deleteById(id) {
-        return db.query(`delete from products where id = + ${id}`);
+        return db.query('delete from products where id = + $1', [id]);
     }
 };
 

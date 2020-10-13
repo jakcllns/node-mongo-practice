@@ -34,7 +34,9 @@ exports.getProducts = (req, res, next) => {
 exports.getProduct = (req, res, next) => {
     const prodId = req.params.productId;
     Product.findById(prodId).then(result => {
+        console.log('Extracting product from result');
         const [product] = result.rows; 
+        console.log(product);
         res.render('shop/product-detail', {pageTitle: 'Product Detail - ' + product.title, path: '/products', product: product});
     });
 }

@@ -34,12 +34,13 @@ exports.getEditProduct = (req,res,next) => {
         return res.redirect('/');
     }
     const prodId = req.params.productId;
-    Product.findById(prodId, product => {
+    Product.findById(prodId).then(result => {
+        const [product] = result.rows;
         if(!product){
             return res.redirect('/');
         }
         res.render('admin/edit-product', {pageTitle: 'Edit Product - ' + product.title, path: appendPrefix(req.url), editing: editMode, product: product});
-    })
+    }).catch(err => console.log(err));
     
 }
 
