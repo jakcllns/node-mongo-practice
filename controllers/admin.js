@@ -15,7 +15,7 @@ exports.postAddProduct = (req, res, next) => {
         imageUrl: req.body.imageUrl,
         description: req.body.description
     }).then(result => {
-        res.redirect(appendPrefix('/add-product'));  
+        res.redirect(appendPrefix('/products'));  
     }).catch(err => console.log(err));
     
 }
@@ -56,7 +56,10 @@ exports.postEditProduct = (req, res, next) => {
 }
 
 exports.postDeleteProduct = (req, res, next) => {
-    Product.deleteById(req.body.productId)
+    Product.findByPk(req.body.productId)
+        .then(product => {
+            return product.destroy();
+        })
         .then(() => res.redirect(appendPrefix('/products')))
         .catch(err => console.log(err));
 }
