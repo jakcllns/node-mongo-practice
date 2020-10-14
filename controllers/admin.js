@@ -9,24 +9,23 @@ exports.getAddProduct = (req,res,next) => {
 }
 
 exports.postAddProduct = (req, res, next) => {
-    const product = new Product(null,req.body.title, req.body.imageUrl,req.body.description, req.body.price);
-    product.save()
-        .then(result => {
-            console.log(result);
-            res.redirect(appendPrefix('/products'));  
-        })
-        .catch(err => console.log(err));
-    
-    
+    Product.create({
+        title: req.body.title,
+        price: req.body.price,
+        imageUrl: req.body.imageUrl,
+        description: req.body.description
+    }).then(result => {
+        res.redirect(appendPrefix('/add-product'));  
+    }).catch(err => console.log(err));
     
 }
 
 exports.getProducts = (req, res, next) => {
-    Product.fetchAll()
-        .then(result => {
-            res.render('admin/products', {prods: result.rows, pageTitle: 'Admin Products', path: appendPrefix(req.url), hasProducts: result.rows.length >0});
-    });
-}
+    Product.findAll().then(products => {
+            res.render('admin/products', {prods: products, pageTitle: 'Admin Products', path: appendPrefix(req.url), hasProducts: products.length >0})
+    }).catch(err => console.log(err));
+};
+
 
 exports.getEditProduct = (req,res,next) => {
     const editMode = req.query.edit

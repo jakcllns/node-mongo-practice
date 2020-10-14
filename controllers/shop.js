@@ -24,8 +24,8 @@ exports.getOrders = (req, res, next) => {
 }
 
 exports.getProducts = (req, res, next) => {
-    Product.fetchAll().then(result => {
-        res.render('shop/product-list', {prods: result.rows, pageTitle: 'Products', path: req.url, hasProducts: result.rows.length >0});
+    Product.findAll().then(products => {
+        res.render('shop/product-list', {prods: products, pageTitle: 'Products', path: req.url, hasProducts: products.length >0});
     }).catch(err => {
         console.log(err);
     });
@@ -33,11 +33,9 @@ exports.getProducts = (req, res, next) => {
 
 exports.getProduct = (req, res, next) => {
     const prodId = req.params.productId;
-    Product.findById(prodId).then(result => {
-        console.log('Extracting product from result');
-        const [product] = result.rows; 
-        console.log(product);
-        res.render('shop/product-detail', {pageTitle: 'Product Detail - ' + product.title, path: '/products', product: product});
+    Product.findByPk(prodId).then(result => {
+        const {dataValues} = result; 
+        res.render('shop/product-detail', {pageTitle: 'Product Detail - ' + dataValues.title, path: '/products', product: dataValues});
     });
 }
 
