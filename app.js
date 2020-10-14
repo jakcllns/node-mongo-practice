@@ -5,6 +5,9 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const database = require('./util/database');
 
+const Product = require('./models/product');
+const User = require('./models/user');
+
 const app = express();
 const PORT = 3000;
 
@@ -22,6 +25,9 @@ app.use('/admin',adminRoutes.routes);
 app.use(shopRoutes.routes);
 
 app.use(require('./controllers/error').get404);
+
+Product.belongsTo(User, {constraints: true, onDelete: 'CASCADE'});
+User.hasMany(Product);
 
 database.sync().then(result => {
     console.log(`Listening on port ${PORT}...`);
