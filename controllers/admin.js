@@ -33,25 +33,26 @@ exports.getEditProduct = (req,res,next) => {
         return res.redirect('/');
     }
     const prodId = req.params.productId;
-    Product.findById(prodId).then(result => {
-        const [product] = result.rows;
-        if(!product){
+    Product.findByPk(prodId).then(result => {
+        const {dataValues} = result;
+        if(!dataValues){
             return res.redirect('/');
         }
-        res.render('admin/edit-product', {pageTitle: 'Edit Product - ' + product.title, path: appendPrefix(req.url), editing: editMode, product: product});
+        res.render('admin/edit-product', {pageTitle: 'Edit Product - ' + dataValues.title, path: appendPrefix(req.url), editing: editMode, product: dataValues});
     }).catch(err => console.log(err));
     
 }
 
 exports.postEditProduct = (req, res, next) => {
-    Product.findById(req.body.productId, prod => {
-        prod.title = req.body.title;
-        prod.imageUrl = req.body.imageUrl;
-        prod.price = req.body.price;
-        prod.description = req.body.description;
-        prod.save();
+    Product.findByPk(req.body.productId).then(product => {
+        product.title = req.body.title;
+        product.imageUrl = req.body.imageUrl;
+        product.price = req.body.price;
+        product.description = req.body.description;
+        return product.save();
+    }). then(() => {
         res.redirect(appendPrefix('/products'));
-    });
+    }).catch(err => console.log(err));
 }
 
 exports.postDeleteProduct = (req, res, next) => {
