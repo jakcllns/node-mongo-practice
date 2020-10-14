@@ -3,6 +3,7 @@ const http = require('http');
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+const database = require('./util/database');
 
 const app = express();
 const PORT = 3000;
@@ -22,5 +23,7 @@ app.use(shopRoutes.routes);
 
 app.use(require('./controllers/error').get404);
 
-console.log(`Listening on port ${PORT}...`);
-app.listen(PORT);
+database.sync().then(result => {
+    console.log(`Listening on port ${PORT}...`);
+    app.listen(PORT);
+}).catch(err=> console.log(err));
