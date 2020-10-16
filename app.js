@@ -20,6 +20,15 @@ const shopRoutes = require('./routes/shop');
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname,'public')));
 
+app.use((req, res, next) => {
+    User.findByPk(1)
+        .then(user => {
+            req.user = user;
+            next();
+        })
+        .catch(err => console.log(err));
+});
+
 app.use('/admin',adminRoutes.routes);
 
 app.use(shopRoutes.routes);
@@ -30,6 +39,16 @@ Product.belongsTo(User, {constraints: true, onDelete: 'CASCADE'});
 User.hasMany(Product);
 
 database.sync().then(result => {
-    console.log(`Listening on port ${PORT}...`);
-    app.listen(PORT);
-}).catch(err=> console.log(err));
+    return User.findByPk(1);
+})
+    .then(user => {
+        if(!user){
+            return User.create({name:'Jake', email: 'test@test.com'})
+        }
+        return user;
+})
+    .then(user => {
+        console.log(`Listening on port ${PORT}...`);
+        app.listen(PORT);
+})
+    .catch(err=> console.log(err));
