@@ -9,11 +9,12 @@ exports.getAddProduct = (req,res,next) => {
 }
 
 exports.postAddProduct = (req, res, next) => {
-    Product.create({
+
+    req.user.createProduct({
         title: req.body.title,
         price: req.body.price,
         imageUrl: req.body.imageUrl,
-        description: req.body.description
+        description: req.body.description,
     }).then(result => {
         res.redirect(appendPrefix('/products'));  
     }).catch(err => console.log(err));
