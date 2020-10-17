@@ -1,5 +1,5 @@
 const Product = require('../models/product');
-const Cart = require('../models/cart');
+
 //Request URL property can be used directly here because it is coming from the base URL
 
 //GET
@@ -43,6 +43,11 @@ exports.getShop = (req, res, next) => {
     res.render('shop/index', {pageTitle: 'Shop', path: req.url})
 }
 
+exports.getOrders = (req, res, next) => {
+    req.user.getOrders({include: ['products']})
+        .then(orders => res.render('shop/orders', { path: req.url, pageTitle: 'Your Orders', orders: orders}))
+        .catch(err => console.log(err));
+}
 //POST
 exports.postCart = (req, res, next) => {
     const prodId = req.body.productId;
@@ -74,3 +79,24 @@ exports.postCartDeleteItem = (req, res, next) => {
         .catch(err => console.log(err));
 }
 
+exports.postOrder = (req, res, next) => {
+    let fetchedProducts;
+    let fetchedCart;
+    req.user.getCart()
+        .then(cart=> {
+            fetchedCart = cart;
+            return cart.getProducts()
+        })
+        .then(products => {
+            fetchedProducts = products.map(product => {
+                product.orderItem = { quantity: product.cartItem.quantity }
+                return product;
+            });
+            return req.user.createOrder();
+        })
+        .then(order => order.addProducts(fetchedProducts))
+        .then(result => fetchedCart.setProducts(null))
+        .then(result => res.redirect('/orders'))
+        .catch(err => console.log(err));
+
+}

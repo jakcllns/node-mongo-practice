@@ -46,7 +46,7 @@ Cart.belongsTo(User);
 Cart.belongsToMany(Product, {through: CartItem});
 Product.belongsToMany(Cart, {through: CartItem});
 Order.belongsTo(User);
-Order.hasMany(Order);
+User.hasMany(Order);
 Order.belongsToMany(Product, { through: OrderItem });
 
 database.sync({force: false}).then(result => {
