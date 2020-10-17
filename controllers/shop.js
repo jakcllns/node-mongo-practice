@@ -4,19 +4,31 @@ const Cart = require('../models/cart');
 
 //GET
 exports.getCart = (req, res, next) => {
-    Cart.getCart(cart => {
-        const cartProducts = [];
-        Product.fetchAll(products => {
-            for (product of cart.products) {
-                let prod = products.find(p => p.id === product.id);
-                if(prod) {
-                    cartProducts.push({productData: prod, qty: product.qty});
-                }
-            }
+    req.user.getCart()
+        .then(cart => {
+            return cart.getProducts()
+        })
+        .then(products => {
+            res.render('shop/cart', {
+                path: req.url,
+                products: products,
+                total: 0
+            })
+        })
+        .catch(err => console.log(err));
+    // Cart.getCart(cart => {
+    //     const cartProducts = [];
+    //     Product.fetchAll(products => {
+    //         for (product of cart.products) {
+    //             let prod = products.find(p => p.id === product.id);
+    //             if(prod) {
+    //                 cartProducts.push({productData: prod, qty: product.qty});
+    //             }
+    //         }
             
-            res.render('shop/cart', {pageTitle: 'Shopping Cart', path: req.url, products: cartProducts, total: cart.totalPrice});
-        });
-    });
+    //         res.render('shop/cart', {pageTitle: 'Shopping Cart', path: req.url, products: cartProducts, total: cart.totalPrice});
+    //     });
+    // });
 }
 
 exports.getOrders = (req, res, next) => {
