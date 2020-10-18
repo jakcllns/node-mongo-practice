@@ -23,8 +23,16 @@ exports.getOrders = (req, res, next) => {
     res.render('shop/orders', {pageTitle: 'Orders', path: req.url,})
 }
 
+exports.getIndex = (req, res, next) => {
+    Product.fetchAll().then(products => {
+        res.render('shop/index', {prods: products, pageTitle: 'Shop', path: req.url, hasProducts: products.length >0});
+    }).catch(err => {
+        console.log(err);
+    });
+}
+
 exports.getProducts = (req, res, next) => {
-    Product.findAll().then(products => {
+    Product.fetchAll().then(products => {
         res.render('shop/product-list', {prods: products, pageTitle: 'Products', path: req.url, hasProducts: products.length >0});
     }).catch(err => {
         console.log(err);
@@ -33,9 +41,8 @@ exports.getProducts = (req, res, next) => {
 
 exports.getProduct = (req, res, next) => {
     const prodId = req.params.productId;
-    Product.findByPk(prodId).then(result => {
-        const {dataValues} = result; 
-        res.render('shop/product-detail', {pageTitle: 'Product Detail - ' + dataValues.title, path: '/products', product: dataValues});
+    Product.findById(prodId).then(product => {
+        res.render('shop/product-detail', {pageTitle: 'Product Detail - ' + product.title, path: '/products', product: product});
     });
 }
 
