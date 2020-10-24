@@ -4,7 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const database = require('./util/database');
-
+const User = require('./models/user');
 
 
 const app = express();
@@ -20,12 +20,12 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname,'public')));
 
 app.use((req, res, next) => {
-    // User.findByPk(1)
-    //     .then(user => {
-    //         req.user = user;
-    //         next();
-    //     })
-    //     .catch(err => console.log(err));
+    User.findById('5f9495fa8115d3822de91e57')
+        .then(user => {
+            req.user = user;
+            next();
+        })
+        .catch(err => console.log(err));
     next();
 });
 
