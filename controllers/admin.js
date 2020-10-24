@@ -12,7 +12,7 @@ exports.getAddProduct = (req,res,next) => {
 }
 
 exports.postAddProduct = (req, res, next) => {
-    const product = new Product(req.body.title, req.body.price, req.body.description,req.body.imageUrl)
+    const product = new Product(req.body.title, req.body.price, req.body.description,req.body.imageUrl, null, req.user._id)
     product.save()
         .then(result => {
             console.log('Created Product');
@@ -43,7 +43,7 @@ exports.getEditProduct = (req,res,next) => {
 }
 
 exports.postEditProduct = (req, res, next) => {
-    const product = new Product(req.body.title,req.body.price,req.body.description,req.body.imageUrl, req.body.productId);
+    const product = new Product(req.body.title,req.body.price,req.body.description,req.body.imageUrl, req.body.productId, req.user._id);
     product.save()
         .then(() => {
             res.redirect(appendPrefix('/products'));
