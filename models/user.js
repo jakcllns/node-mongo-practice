@@ -6,7 +6,7 @@ class User {
     constructor(username, email, cart, id){
         this.name = username;
         this.email = email;
-        this.cart = cart ? cart: {items: [], totalItems: 0, totalPrice: 0.00};// {items: []}
+        this.cart = cart ? cart: {items: []};// {items: []}
         this._id = new mongodb.ObjectId(id);
     }
 
@@ -28,9 +28,7 @@ class User {
         cartProduct.quantity++
 
         const updatedCart = {
-            items: [cartProduct,...this.cart.items.filter(p => p.productId.toString() !== product._id.toString())], 
-            totalItems: this.cart.totalItems + 1, 
-            totalPrice: +this.cart.totalPrice + +product.price
+            items: [cartProduct,...this.cart.items.filter(p => p.productId.toString() !== product._id.toString())]
         };
 
         return getDb().collection('users').updateOne(
@@ -39,9 +37,35 @@ class User {
         )
     }
 
+    getCart(){
+        return getDb().
+            collection('products')
+            .find({_id: {$in: this.cart.items.map(p => p.productId)}})
+            .toArray()
+            .then(products => {
+               return products.map(p => {
+                   return {
+                        ...p, 
+                        quantity: this.cart.items.find(i => {
+                            return i.productId.toString() === p._id.toString();
+                        }).quantity
+                    };
+               }) 
+            });
+    }
+
+    removeItemFromCart(productId){
+        const updatedCartItems = this.cart.items.filter(item => item.productId.toString() !== productId.toString());
+        return getDb().collection('users').updateOne(
+            {_id: new mongodb.ObjectId(this._id)},
+            {$set: {cart: {items: updatedCartItems}}}
+        )
+    }
+
     static findById(userId) {
         return getDb().collection('users').findOne({_id: new mongodb.ObjectId(userId)});
     }
+
 }
 
 module.exports = User;
