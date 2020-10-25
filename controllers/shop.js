@@ -60,10 +60,8 @@ exports.getShop = (req, res, next) => {
 //POST
 exports.postCart = (req, res, next) => {
     const prodId = req.body.productId;
-    console.log('Post User:',req.user)
     Product.findById(prodId)
         .then(product => {
-            console.log('User:',req.user);
             return req.user.addToCart(product);
         })
         .then(result => {

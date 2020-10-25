@@ -38,21 +38,40 @@ class User {
     }
 
     getCart(){
+        let l = [];
+        
         return getDb().
             collection('products')
             .find({_id: {$in: this.cart.items.map(p => p.productId)}})
             .toArray()
             .then(products => {
-               return products.map(p => {
+               const prods = products.map(p => {
                    return {
                         ...p, 
                         quantity: this.cart.items.find(i => {
                             return i.productId.toString() === p._id.toString();
                         }).quantity
                     };
-               }) 
+               })
+               if(products.length !== this.cart.items.length){
+                    return getDb().collection('users')
+                        .updateOne(
+                            {_id: new mongodb.ObjectId(this._id)},
+                            {$set: 
+                                {cart: {
+                                    items: this.cart.items.filter(
+                                        p => products.some(
+                                            prod => prod._id.toString() === p.productId.toString()
+                                    ))
+                                }}
+                            }
+                        ).then(() => prods)
+                        .catch(err => console.log(err));
+               }
+               return prods 
             });
     }
+    
 
     removeItemFromCart(productId){
         const updatedCartItems = this.cart.items.filter(item => item.productId.toString() !== productId.toString());
