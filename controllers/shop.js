@@ -58,23 +58,33 @@ exports.getOrders = (req, res, next) => {
 //POST
 exports.postCart = (req, res, next) => {
     const prodId = req.body.productId;
-    let userCart;
-    req.user.getCart()
-        .then(cart => {
-            userCart = cart;     
-            return cart.getProducts({where: {id: prodId}});
+    console.log('Post User:',req.user)
+    Product.findById(prodId)
+        .then(product => {
+            console.log('User:',req.user);
+            return req.user.addToCart(product);
         })
-        .then(products => {
-            console.log(products);
-            if (products.length > 0 ){
-                return userCart.addProduct(products[0], {
-                    through: { quantity: products[0].cartItem.quantity + 1}
-                });
-            }
-            return Product.findByPk(prodId).then(product => userCart.addProduct(product, {through: { quantity: 1}})).catch(err => console.log(err));
+        .then(result => {
+            res.redirect('/cart')
         })
-        .then(() =>  res.redirect('/cart'))
         .catch(err => console.log(err));
+    // let userCart;
+    // req.user.getCart()
+    //     .then(cart => {
+    //         userCart = cart;     
+    //         return cart.getProducts({where: {id: prodId}});
+    //     })
+    //     .then(products => {
+    //         console.log(products);
+    //         if (products.length > 0 ){
+    //             return userCart.addProduct(products[0], {
+    //                 through: { quantity: products[0].cartItem.quantity + 1}
+    //             });
+    //         }
+    //         return Product.findByPk(prodId).then(product => userCart.addProduct(product, {through: { quantity: 1}})).catch(err => console.log(err));
+    //     })
+    //     .then(() =>  res.redirect('/cart'))
+    //     .catch(err => console.log(err));
 
 }
 
