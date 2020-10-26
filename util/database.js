@@ -5,7 +5,11 @@ const MongoClient = mongodb.MongoClient;
 let _db;
 
 const mongoConnect = (callback) => {
-    MongoClient.connect('mongodb://localhost:8080/?readPreference=primary&appname=MongoDB%20Compass&ssl=false', {useUnifiedTopology: true})
+    //Local for now will update to use authentication as build continues
+    MongoClient.connect(
+        'mongodb://localhost:8080/?readPreference=primary&appname=MongoDB%20Compass&ssl=false', 
+        {useUnifiedTopology: true}
+    )
     .then(client => {
         console.log(`Connected to ${client.db('shop').databaseName} database...`)
         _db = client.db('shop')
